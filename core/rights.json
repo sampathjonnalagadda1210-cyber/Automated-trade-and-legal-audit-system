@@ -1,0 +1,215 @@
+{
+  "languages": {
+    "en": "English",
+    "hi": "हिन्दी",
+    "ta": "தமிழ்"
+  },
+  "note": "Every entry is keyed by the rule the scan failed, so the explanation a shopper sees is tied to the actual finding rather than being generic advice. Translations are templated per rule ID, which is what makes adding a language a data task rather than a code task.",
+
+  "ui": {
+    "en": {
+      "your_right": "Your right",
+      "what_to_do": "What you can do",
+      "rule_cited": "Rule cited",
+      "file_complaint": "File a complaint",
+      "compliant_title": "This pack looks compliant",
+      "compliant_body": "All the declarations the law requires were found on this pack, and the price and quantity are printed large enough to read.",
+      "noncompliant_title": "This pack has a problem",
+      "escalate": "Where to complain",
+      "escalate_body": "Legal Metrology is enforced by your State Legal Metrology Department. Consumer grievances can also go to the National Consumer Helpline on 1915, or the INGRAM portal at consumerhelpline.gov.in."
+    },
+    "hi": {
+      "your_right": "आपका अधिकार",
+      "what_to_do": "आप क्या कर सकते हैं",
+      "rule_cited": "उद्धृत नियम",
+      "file_complaint": "शिकायत दर्ज करें",
+      "compliant_title": "यह पैक नियमों के अनुरूप दिखता है",
+      "compliant_body": "कानून द्वारा आवश्यक सभी घोषणाएँ इस पैक पर पाई गईं, और मूल्य तथा मात्रा पर्याप्त बड़े अक्षरों में छपे हैं।",
+      "noncompliant_title": "इस पैक में समस्या है",
+      "escalate": "शिकायत कहाँ करें",
+      "escalate_body": "विधिक माप विज्ञान का प्रवर्तन आपके राज्य के विधिक माप विज्ञान विभाग द्वारा किया जाता है। उपभोक्ता शिकायतें राष्ट्रीय उपभोक्ता हेल्पलाइन 1915 पर या consumerhelpline.gov.in पर भी दर्ज की जा सकती हैं।"
+    },
+    "ta": {
+      "your_right": "உங்கள் உரிமை",
+      "what_to_do": "நீங்கள் என்ன செய்யலாம்",
+      "rule_cited": "மேற்கோள் காட்டப்பட்ட விதி",
+      "file_complaint": "புகார் அளிக்கவும்",
+      "compliant_title": "இந்தப் பொதி விதிகளுக்கு உட்பட்டதாகத் தெரிகிறது",
+      "compliant_body": "சட்டம் கோரும் அனைத்து அறிவிப்புகளும் இந்தப் பொதியில் காணப்பட்டன, மேலும் விலையும் அளவும் படிக்கும் அளவுக்குப் பெரிதாக அச்சிடப்பட்டுள்ளன.",
+      "noncompliant_title": "இந்தப் பொதியில் ஒரு சிக்கல் உள்ளது",
+      "escalate": "எங்கே புகார் அளிப்பது",
+      "escalate_body": "சட்ட அளவையியல் உங்கள் மாநில சட்ட அளவையியல் துறையால் அமல்படுத்தப்படுகிறது. நுகர்வோர் புகார்களை தேசிய நுகர்வோர் உதவி எண் 1915 அல்லது consumerhelpline.gov.in மூலமும் அளிக்கலாம்."
+    }
+  },
+
+  "rights": {
+    "MISSING_MRP": {
+      "en": {
+        "right": "You cannot be charged more than the printed Maximum Retail Price, and a pack with no MRP on it cannot be sold to you at all.",
+        "action": "Do not accept a handwritten or sticker price. Photograph the pack and report it - selling an unmarked pack is an offence, not a shop's discretion."
+      },
+      "hi": {
+        "right": "आपसे छपे हुए अधिकतम खुदरा मूल्य से अधिक शुल्क नहीं लिया जा सकता, और जिस पैक पर MRP नहीं है उसे आपको बेचा ही नहीं जा सकता।",
+        "action": "हाथ से लिखा या स्टिकर वाला मूल्य स्वीकार न करें। पैक की तस्वीर लें और शिकायत करें - बिना अंकित पैक बेचना एक अपराध है।"
+      },
+      "ta": {
+        "right": "அச்சிடப்பட்ட அதிகபட்ச சில்லறை விலையை விட அதிகமாக உங்களிடம் வசூலிக்க முடியாது; MRP இல்லாத பொதியை உங்களுக்கு விற்கவே முடியாது.",
+        "action": "கையால் எழுதிய அல்லது ஸ்டிக்கர் விலையை ஏற்காதீர்கள். பொதியைப் புகைப்படம் எடுத்துப் புகார் அளியுங்கள் - குறியிடப்படாத பொதியை விற்பது ஒரு குற்றம்."
+      }
+    },
+    "MRP_MISSING_INCLUSIVE_TAX_WORDING": {
+      "en": {
+        "right": "The MRP already includes every tax. No shop may add GST, packing, cooling or 'handling' charges on top of it.",
+        "action": "If a shop adds anything above the printed MRP, keep the bill - the bill plus the pack is complete evidence."
+      },
+      "hi": {
+        "right": "MRP में सभी कर पहले से शामिल हैं। कोई भी दुकान इसके ऊपर GST, पैकिंग, कूलिंग या 'हैंडलिंग' शुल्क नहीं जोड़ सकती।",
+        "action": "यदि दुकान छपे MRP से अधिक कुछ जोड़ती है, तो बिल संभालकर रखें - बिल और पैक मिलकर पूरा सबूत हैं।"
+      },
+      "ta": {
+        "right": "MRP-யில் அனைத்து வரிகளும் ஏற்கனவே சேர்க்கப்பட்டுள்ளன. எந்தக் கடையும் அதற்கு மேல் GST, பொதி, குளிரூட்டல் அல்லது 'கையாளுதல்' கட்டணம் சேர்க்க முடியாது.",
+        "action": "அச்சிடப்பட்ட MRP-ஐ விட கடை கூடுதலாக ஏதேனும் சேர்த்தால், ரசீதை வைத்திருங்கள் - ரசீதும் பொதியும் சேர்ந்தே முழுமையான சான்று."
+      }
+    },
+    "MISSING_NET_QUANTITY": {
+      "en": {
+        "right": "You are entitled to know exactly how much you are buying, in grams, millilitres or pieces.",
+        "action": "A pack that does not state its net quantity cannot be legally sold at retail. Report it with a photo."
+      },
+      "hi": {
+        "right": "आपको यह जानने का अधिकार है कि आप ठीक कितना खरीद रहे हैं - ग्राम, मिलीलीटर या नग में।",
+        "action": "जो पैक अपनी शुद्ध मात्रा नहीं बताता, उसे खुदरा में कानूनी रूप से नहीं बेचा जा सकता। तस्वीर के साथ शिकायत करें।"
+      },
+      "ta": {
+        "right": "நீங்கள் எவ்வளவு வாங்குகிறீர்கள் என்பதை கிராம், மில்லிலிட்டர் அல்லது எண்ணிக்கையில் அறிய உங்களுக்கு உரிமை உண்டு.",
+        "action": "நிகர அளவைக் குறிப்பிடாத பொதியைச் சில்லறையாக விற்க சட்டப்படி முடியாது. புகைப்படத்துடன் புகார் அளியுங்கள்."
+      }
+    },
+    "FONT_TOO_SMALL": {
+      "en": {
+        "right": "The price and quantity must be printed large enough to actually read - the law sets a minimum height in millimetres based on pack size.",
+        "action": "Print too small to read is a violation in itself, even if the information is technically present. Report the pack."
+      },
+      "hi": {
+        "right": "मूल्य और मात्रा इतने बड़े छपे होने चाहिए कि वास्तव में पढ़े जा सकें - कानून पैक के आकार के अनुसार न्यूनतम ऊँचाई मिलीमीटर में तय करता है।",
+        "action": "पढ़ने में बहुत छोटी छपाई अपने आप में उल्लंघन है, भले ही जानकारी तकनीकी रूप से मौजूद हो। पैक की शिकायत करें।"
+      },
+      "ta": {
+        "right": "விலையும் அளவும் உண்மையில் படிக்கும் அளவுக்குப் பெரிதாக அச்சிடப்பட வேண்டும் - பொதியின் அளவைப் பொறுத்து சட்டம் குறைந்தபட்ச உயரத்தை மில்லிமீட்டரில் நிர்ணயிக்கிறது.",
+        "action": "படிக்க முடியாத அளவு சிறிய அச்சு தானே ஒரு மீறல், தகவல் இருந்தாலும் கூட. பொதி குறித்துப் புகார் அளியுங்கள்."
+      }
+    },
+    "MISSING_MANUFACTURER_NAME_ADDRESS": {
+      "en": {
+        "right": "You are entitled to know who made or packed the product and where, so that you can hold someone accountable.",
+        "action": "An anonymous pack leaves you with no one to claim against. Report it."
+      },
+      "hi": {
+        "right": "आपको यह जानने का अधिकार है कि उत्पाद किसने और कहाँ बनाया या पैक किया, ताकि आप किसी को जवाबदेह ठहरा सकें।",
+        "action": "गुमनाम पैक पर आप किसी से दावा नहीं कर सकते। इसकी शिकायत करें।"
+      },
+      "ta": {
+        "right": "பொருளை யார், எங்கே தயாரித்தார் அல்லது பொதிந்தார் என்பதை அறிய உங்களுக்கு உரிமை உண்டு - அப்போதுதான் ஒருவரைப் பொறுப்பாக்க முடியும்.",
+        "action": "பெயரற்ற பொதியில் யாரிடமும் உரிமை கோர முடியாது. புகார் அளியுங்கள்."
+      }
+    },
+    "MISSING_CONSUMER_CARE": {
+      "en": {
+        "right": "Every pack must carry a working way to reach the company - a name, address and a phone number or email for complaints.",
+        "action": "Without consumer care details you have no first line of redress. Report the pack."
+      },
+      "hi": {
+        "right": "हर पैक पर कंपनी तक पहुँचने का कार्यशील तरीका होना चाहिए - शिकायत के लिए नाम, पता और फोन नंबर या ईमेल।",
+        "action": "उपभोक्ता सेवा विवरण के बिना आपके पास निवारण की पहली कड़ी ही नहीं है। पैक की शिकायत करें।"
+      },
+      "ta": {
+        "right": "ஒவ்வொரு பொதியிலும் நிறுவனத்தை அணுகும் வழி இருக்க வேண்டும் - புகாருக்கான பெயர், முகவரி மற்றும் தொலைபேசி எண் அல்லது மின்னஞ்சல்.",
+        "action": "நுகர்வோர் சேவை விவரங்கள் இல்லாமல் உங்களுக்கு முதல்கட்ட தீர்வே இல்லை. பொதி குறித்துப் புகார் அளியுங்கள்."
+      }
+    },
+    "MISSING_COUNTRY_OF_ORIGIN": {
+      "en": {
+        "right": "For imported goods you are entitled to know which country the product came from before you decide to buy it.",
+        "action": "Missing origin on an imported pack is a declared violation and e-commerce listings must show it too."
+      },
+      "hi": {
+        "right": "आयातित वस्तुओं के लिए, खरीदने का निर्णय लेने से पहले आपको यह जानने का अधिकार है कि उत्पाद किस देश से आया है।",
+        "action": "आयातित पैक पर मूल देश का न होना एक घोषित उल्लंघन है, और ई-कॉमर्स लिस्टिंग पर भी इसे दिखाना अनिवार्य है।"
+      },
+      "ta": {
+        "right": "இறக்குமதி செய்யப்பட்ட பொருட்களுக்கு, வாங்கும் முன் அது எந்த நாட்டிலிருந்து வந்தது என்பதை அறிய உங்களுக்கு உரிமை உண்டு.",
+        "action": "இறக்குமதிப் பொதியில் தோற்ற நாடு இல்லாதது அறிவிக்கப்பட்ட மீறல்; இணையவழி பட்டியல்களிலும் இதைக் காட்ட வேண்டும்."
+      }
+    },
+    "MISSING_MFG_DATE": {
+      "en": {
+        "right": "You are entitled to know the month and year the pack was made, packed or imported, so you can judge how old it is.",
+        "action": "Report packs with no date - this is what lets old stock be passed off as fresh."
+      },
+      "hi": {
+        "right": "आपको यह जानने का अधिकार है कि पैक किस माह और वर्ष में बना, पैक या आयात हुआ, ताकि आप उसकी आयु आँक सकें।",
+        "action": "बिना तारीख वाले पैक की शिकायत करें - इसी से पुराना स्टॉक ताज़ा बताकर बेचा जाता है।"
+      },
+      "ta": {
+        "right": "பொதி எந்த மாதம், ஆண்டில் தயாரிக்கப்பட்டது, பொதியப்பட்டது அல்லது இறக்குமதி செய்யப்பட்டது என்பதை அறிய உங்களுக்கு உரிமை உண்டு.",
+        "action": "தேதி இல்லாத பொதிகள் குறித்துப் புகார் அளியுங்கள் - இதன் மூலமே பழைய இருப்பு புதியது போலக் கடத்தப்படுகிறது."
+      }
+    },
+    "MISSING_UNIT_SALE_PRICE": {
+      "en": {
+        "right": "On larger packs the price per standard unit helps you compare sizes honestly instead of guessing.",
+        "action": "This is a minor declaration, but its absence still belongs in a complaint about the pack."
+      },
+      "hi": {
+        "right": "बड़े पैक पर प्रति मानक इकाई मूल्य आपको अनुमान लगाने के बजाय आकारों की ईमानदारी से तुलना करने में मदद करता है।",
+        "action": "यह एक गौण घोषणा है, फिर भी इसकी अनुपस्थिति पैक की शिकायत में शामिल की जानी चाहिए।"
+      },
+      "ta": {
+        "right": "பெரிய பொதிகளில் நிலையான அலகுக்கான விலை, ஊகிக்காமல் நேர்மையாக அளவுகளை ஒப்பிட உதவுகிறது.",
+        "action": "இது சிறிய அறிவிப்பு என்றாலும், அது இல்லாததும் பொதி குறித்த புகாரில் இடம்பெற வேண்டியதே."
+      }
+    },
+    "MISSING_COMMODITY_NAME": {
+      "en": {
+        "right": "The pack must say in plain words what the product actually is, not only a brand name.",
+        "action": "A pack that only shows branding and no generic name is not properly declared."
+      },
+      "hi": {
+        "right": "पैक पर सादे शब्दों में यह लिखा होना चाहिए कि उत्पाद वास्तव में क्या है, केवल ब्रांड नाम नहीं।",
+        "action": "जिस पैक पर केवल ब्रांडिंग है और कोई सामान्य नाम नहीं, वह ठीक से घोषित नहीं है।"
+      },
+      "ta": {
+        "right": "பொருள் உண்மையில் என்ன என்பதை எளிய சொற்களில் பொதி கூற வேண்டும், வெறும் வணிகப் பெயர் மட்டும் போதாது.",
+        "action": "வணிகப் பெயர் மட்டும் இருந்து பொதுப் பெயர் இல்லாத பொதி முறையாக அறிவிக்கப்படவில்லை."
+      }
+    },
+    "MFG_DATE_IN_FUTURE": {
+      "en": {
+        "right": "A manufacturing date that has not happened yet means the declaration is false, not merely sloppy.",
+        "action": "Photograph it and report it - a false declaration is treated more seriously than a missing one."
+      },
+      "hi": {
+        "right": "ऐसी निर्माण तिथि जो अभी आई ही नहीं, इसका अर्थ है कि घोषणा झूठी है, केवल लापरवाह नहीं।",
+        "action": "इसकी तस्वीर लें और शिकायत करें - झूठी घोषणा को अनुपस्थित घोषणा से अधिक गंभीरता से लिया जाता है।"
+      },
+      "ta": {
+        "right": "இன்னும் வராத தயாரிப்புத் தேதி என்பது அறிவிப்பு தவறானது என்பதைக் குறிக்கிறது, வெறும் கவனக்குறைவு அல்ல.",
+        "action": "புகைப்படம் எடுத்துப் புகார் அளியுங்கள் - தவறான அறிவிப்பு, இல்லாத அறிவிப்பை விடத் தீவிரமாகக் கருதப்படுகிறது."
+      }
+    },
+    "DEFAULT": {
+      "en": {
+        "right": "Packaged goods sold in India must carry a fixed set of declarations so that you can see what you are buying, from whom, how much of it, and at what price.",
+        "action": "Keep the pack and the bill, and report the shortfall to your State Legal Metrology Department."
+      },
+      "hi": {
+        "right": "भारत में बिकने वाले पैकबंद सामान पर निश्चित घोषणाएँ होनी चाहिए ताकि आप देख सकें कि आप क्या, किससे, कितना और किस मूल्य पर खरीद रहे हैं।",
+        "action": "पैक और बिल संभालकर रखें, और कमी की शिकायत अपने राज्य के विधिक माप विज्ञान विभाग को करें।"
+      },
+      "ta": {
+        "right": "இந்தியாவில் விற்கப்படும் பொதிசெய்யப்பட்ட பொருட்களில் நிர்ணயிக்கப்பட்ட அறிவிப்புகள் இருக்க வேண்டும் - நீங்கள் என்ன, யாரிடமிருந்து, எவ்வளவு, என்ன விலைக்கு வாங்குகிறீர்கள் என்பதை அறியவே.",
+        "action": "பொதியையும் ரசீதையும் வைத்திருங்கள், குறைபாட்டை உங்கள் மாநில சட்ட அளவையியல் துறைக்குத் தெரிவியுங்கள்."
+      }
+    }
+  }
+}

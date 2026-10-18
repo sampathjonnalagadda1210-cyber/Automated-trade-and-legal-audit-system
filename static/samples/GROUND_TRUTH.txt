@@ -1,0 +1,4 @@
+Demo labels are rendered at 12.0 pixels per millimetre.
+EAN-13 symbols are drawn at GS1 nominal magnification (1.0),
+so the true symbol width is 31.35 mm -> 376.2 px.
+The calibration step should therefore recover ~12.0 px/mm.

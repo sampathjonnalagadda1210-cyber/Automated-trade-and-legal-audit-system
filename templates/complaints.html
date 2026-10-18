@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Complaints register &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Complaints register</h1>
+<p class="lede">Everything this device has produced in the way of
+complaints: the shopper letters generated at the counter, and the
+formal memos an inspector files with the department. Both queues
+show their sync state so nothing filed on the road is left behind.</p>
+
+<div class="g4">
+  <div class="card stat"><div class="n">{{ letters_total }}</div>
+    <div class="l">Shopper letters</div></div>
+  <div class="card stat"><div class="n">{{ memos_total }}</div>
+    <div class="l">Official memos</div></div>
+  <div class="card stat"><div class="n">{{ submitted }}</div>
+    <div class="l">Memos submitted</div></div>
+  <div class="card stat"><div class="n {{ 'no' if queued }}">{{ queued }}</div>
+    <div class="l">Awaiting sync</div></div>
+</div>
+
+<h2 style="margin-top:26px">Official memos</h2>
+<p class="help">Formal complaints under the Rules, addressed to the
+department. Status is DRAFT until the signed copy is submitted,
+SUBMITTED once it is on file with the Controller.</p>
+<div class="table-scroll"><table>
+  <tr><th>Reference</th><th>Raised</th><th>Officer</th><th>Addressee</th>
+      <th>Place seized</th><th>Action</th><th>Status</th><th>Sync</th>
+      <th></th></tr>
+  {% for m in memos %}
+  <tr>
+    <td class="mono">{{ m.reference }}</td>
+    <td class="mono">{{ m.created_at[:16].replace('T',' ') }}</td>
+    <td>{{ m.officer_name }}</td>
+    <td>{{ m.addressee }}</td>
+    <td>{{ m.place_seized or '—' }}</td>
+    <td><span class="pill {{ 'ok' if m.action_prayed=='SEIZURE_ONLY' else 'na' }}">{{ m.action_prayed.replace('_',' ') }}</span></td>
+    <td><span class="pill {{ 'ok' if m.status=='SUBMITTED' else 'na' }}">{{ m.status }}</span></td>
+    <td>{{ m.sync_state }}</td>
+    <td><a class="btn alt sm" href="{{ url_for('scan_result', scan_id=m.scan_id) }}">Case</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="9">No memos drafted yet. Open a non-compliant scan
+    and choose &ldquo;Prepare the official complaint&rdquo;.</td></tr>
+  {% endfor %}
+</table></div>
+
+<div class="pager">
+  {% if page > 1 %}
+  <a class="btn alt sm" href="{{ url_for('complaints_register', page=page-1) }}">&larr; Newer</a>
+  {% endif %}
+  <span class="help">{{ memos_total }} memo(s) &middot; page {{ page }} of {{ memos_pages }}</span>
+  {% if page < memos_pages %}
+  <a class="btn alt sm" href="{{ url_for('complaints_register', page=page+1) }}">Older &rarr;</a>
+  {% endif %}
+</div>
+
+<h2 style="margin-top:26px">Shopper letters</h2>
+<p class="help">Consumer-awareness letters in the shopper's own
+language, generated from the same findings the officer saw.</p>
+<div class="table-scroll"><table>
+  <tr><th>Reference</th><th>Raised</th><th>Complainant</th>
+      <th>Contact</th><th>Language</th><th>Scan</th><th>Sync</th></tr>
+  {% for c in letters %}
+  <tr>
+    <td class="mono">{{ c.reference }}</td>
+    <td class="mono">{{ c.created_at[:16].replace('T',' ') }}</td>
+    <td>{{ c.complainant or '—' }}</td>
+    <td>{{ c.contact or '—' }}</td>
+    <td><span class="pill ok">{{ c.language|upper }}</span></td>
+    <td class="mono">{{ c.product_name or c.scan_uid }}</td>
+    <td>{{ c.sync_state }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="7">No letters filed yet.</td></tr>
+  {% endfor %}
+</table></div>
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}New scan &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>New scan</h1>
+<p class="lede">Photograph the principal display panel of the pack. If you supply
+several frames of the same label they are registered and fused, which recovers
+text lost under glare on glossy packaging. Everything below runs on this device
+&mdash; no network is used to reach a verdict.</p>
+
+<form method="post" enctype="multipart/form-data">
+<input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+<div class="split">
+  <div>
+    <div class="card">
+      <h3>1 &middot; Frames</h3>
+      <label for="frames">Upload one or more photos of the same pack</label>
+      <input id="frames" name="frames" type="file" accept="image/*" multiple>
+      <p class="help">Two or three frames taken at slightly different angles
+        give the glare-recovery step something to work with.</p>
+
+      <h3 style="margin-top:20px">&hellip; or use a bundled demo label</h3>
+      <div class="samples">
+        {% for s in samples %}
+        <label>
+          <img src="{{ url_for('static', filename='samples/' ~ s) }}" alt="">
+          <input type="checkbox" name="sample" value="{{ s }}">{{ s.replace('.png','').replace('_',' ') }}
+        </label>
+        {% endfor %}
+      </div>
+      <p class="help">Tick the three <b>glare frame</b> labels together to see
+        multi-frame recovery; tick one label on its own for a normal scan.</p>
+    </div>
+
+    <div class="card">
+      <h3>2 &middot; Pack details <span style="text-transform:none;letter-spacing:0">(optional)</span></h3>
+      <div class="grid g2">
+        <div><label for="pn">Product name</label>
+          <input id="pn" name="product_name" type="text" placeholder="Read from the label if left blank"></div>
+        <div><label for="cat">Category</label>
+          <select id="cat" name="category">
+            <option value="">Not specified</option>
+            <option>Food</option><option>Beverage</option>
+            <option>Personal care</option><option>Household</option>
+            <option>Electronics</option><option>Other</option>
+          </select></div>
+        <div><label for="mf">Manufacturer / packer</label>
+          <input id="mf" name="manufacturer" type="text"></div>
+        <div><label for="loc">Premises inspected</label>
+          <input id="loc" name="location" type="text" placeholder="Shop, market or godown"></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="card">
+      <h3>3 &middot; Scale calibration</h3>
+      <p class="help" style="margin-bottom:10px">
+        Rule 7(3) fixes declaration heights in millimetres, so the scan needs to
+        know how many pixels make a millimetre. A.T.L.A.S. reads the pack's own
+        EAN-13 barcode as an in-frame ruler &mdash; a GS1 symbol is 95 modules
+        wide, 31.35&nbsp;mm at nominal magnification. Nothing needs to be typed
+        in when a barcode is visible.</p>
+      <label for="w">Fallback: pack width in mm</label>
+      <input id="w" name="package_width_mm" type="number" step="0.1" min="1"
+             placeholder="Only used if no barcode is readable">
+      <label style="text-transform:none;letter-spacing:0;margin-top:14px">
+        <input type="checkbox" name="embossed" value="1" style="width:auto">
+        Declarations are blown, formed or embossed on the container
+      </label>
+      <p class="help">Rule 7(3) sets a higher minimum height for embossed print.</p>
+    </div>
+
+    <div class="card">
+      <h3>What gets checked</h3>
+      <p class="help">All eight mandatory declarations under Rule 6, the
+        "inclusive of all taxes" qualifier under Rule 18(2), the Rule 7(3)
+        minimum heights for MRP and net quantity, Rule 26 and wholesale
+        exemptions, an impossible manufacture date, and a cross-check between
+        the barcode's GS1 country prefix and the declared country of origin.</p>
+      <p class="help">If the capture is too poor to rely on, the scan returns
+        <b>INCONCLUSIVE</b> and asks for a retake rather than guessing.</p>
+    </div>
+
+    <button class="btn" style="width:100%">Run compliance scan</button>
+  </div>
+</div>
+</form>
+{% endblock %}

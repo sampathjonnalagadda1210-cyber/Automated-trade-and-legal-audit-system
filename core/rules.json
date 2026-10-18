@@ -1,0 +1,176 @@
+{
+  "rule_set_version": "2026.1",
+  "effective_from": "2026-01-01",
+  "source": "Legal Metrology (Packaged Commodities) Rules, 2011, as amended (incl. the 2017 amendment and the Second Amendment Rules, 2022)",
+  "note": "This table is the single source of truth for every check the engine performs. Amending a rule means editing this file - no Python changes. A legal SME should validate it against the currently notified Rules before any enforcement use.",
+
+  "mandatory_fields": [
+    {
+      "field": "MANUFACTURER_NAME_ADDRESS",
+      "label": "Name & complete address of manufacturer / packer / importer",
+      "citation": "Rule 6(1)(a)",
+      "severity": "major",
+      "keywords": ["mfg by", "mfd by", "mfd. by", "manufactured by", "marketed by", "packed by", "imported by", "mktd by", "manufacturer", "packer", "importer", "mfg. by", "packed & marketed by"],
+      "plain": "Every retail pack must carry the name and full address of whoever made, packed or imported it."
+    },
+    {
+      "field": "COMMODITY_NAME",
+      "label": "Common or generic name of the commodity",
+      "citation": "Rule 6(1)(b)",
+      "severity": "major",
+      "keywords": [],
+      "plain": "The pack must say what the product actually is, in plain language."
+    },
+    {
+      "field": "NET_QUANTITY",
+      "label": "Net quantity in standard units",
+      "citation": "Rule 6(1)(c) read with Rule 8",
+      "severity": "major",
+      "keywords": ["net qty", "net quantity", "net wt", "net weight", "net vol", "net volume", "net content"],
+      "regex": "\\b\\d+(\\.\\d+)?\\s?(g|gm|gms|gram|grams|kg|kilogram|ml|millilitre|milliliter|l|ltr|litre|liter|litres|liters|pcs|piece|pieces|nos)\\b",
+      "plain": "The quantity inside must be stated in standard metric units."
+    },
+    {
+      "field": "MRP",
+      "label": "Retail sale price as 'Maximum Retail Price ... inclusive of all taxes'",
+      "citation": "Rule 6(1)(e) read with Rule 18",
+      "severity": "major",
+      "keywords": ["mrp", "m.r.p", "maximum retail price", "max retail price"],
+      "regex": "(mrp|m\\.?r\\.?p\\.?|maximum retail price)[^0-9]{0,25}(rs\\.?|inr|₹)?\\s?\\d+(\\.\\d{1,2})?",
+      "inclusive_tax_regex": "incl(usive|[.,:;])?\\s*(of\\s*)?all\\s*tax(es)?",
+      "plain": "The maximum retail price must be printed, and it must say it already includes all taxes."
+    },
+    {
+      "field": "MFG_DATE",
+      "label": "Month & year of manufacture / packing / import",
+      "citation": "Rule 6(1)(d)",
+      "severity": "major",
+      "keywords": ["mfg date", "mfg.date", "mfg:", "manufactured on", "packed on", "date of mfg", "month & year", "month and year", "mfd", "pkd", "packing date", "date of packing"],
+      "regex": "\\b(0[1-9]|1[0-2])[\\/\\-\\.](19|20)\\d{2}\\b|\\b(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-z]*\\.?\\s?,?\\s?(19|20)\\d{2}\\b",
+      "plain": "The pack must show the month and year it was made, packed or imported."
+    },
+    {
+      "field": "CONSUMER_CARE",
+      "label": "Consumer care contact (name, address, phone / email)",
+      "citation": "Rule 6(1)(f)",
+      "severity": "major",
+      "keywords": ["consumer care", "customer care", "consumer complaint", "toll free", "toll-free", "helpline", "for complaints", "email", "e-mail", "@", "www.", "care@", "1800"],
+      "plain": "There must be a way to reach the company if something is wrong with the pack."
+    },
+    {
+      "field": "COUNTRY_OF_ORIGIN",
+      "label": "Country of origin",
+      "citation": "Rule 6(1)(g) read with Rule 27",
+      "severity": "major",
+      "keywords": ["country of origin", "made in", "product of", "origin:"],
+      "conditional": "imported_only",
+      "plain": "Imported packs must name the country the goods came from."
+    },
+    {
+      "field": "UNIT_SALE_PRICE",
+      "label": "Unit sale price, where required",
+      "citation": "Rule 6(1)(e) proviso",
+      "severity": "minor",
+      "keywords": ["unit sale price", "price per", "rate per", "per 100 g", "per 100 ml", "per kg", "per litre"],
+      "plain": "Larger packs should also show the price per standard unit so shoppers can compare."
+    }
+  ],
+
+  "font_height_table_mm": {
+    "citation": "Rule 7(3), Third Schedule",
+    "general_minimum_mm": 1.0,
+    "general_minimum_embossed_mm": 2.0,
+    "by_net_quantity": [
+      {"max_qty_g_ml": 200,  "normal_mm": 1.0, "embossed_mm": 2.0, "band": "up to 200 g / ml"},
+      {"max_qty_g_ml": 500,  "normal_mm": 2.0, "embossed_mm": 4.0, "band": "above 200 up to 500 g / ml"},
+      {"max_qty_g_ml": null, "normal_mm": 4.0, "embossed_mm": 6.0, "band": "above 500 g / ml"}
+    ],
+    "measurement_tolerance_mm": 0.25,
+    "note": "Tolerance absorbs OCR box and calibration error, so a declaration is only flagged when it is clearly below the minimum rather than marginally so."
+  },
+
+  "commodity_name_reject": [
+    "energy", "protein", "carbohydrate", "total sugars", "total fat",
+    "saturated fat", "trans fat", "sodium", "cholesterol", "ingredients",
+    "nutritional information", "nutrition facts", "per 100 g", "per 100g",
+    "per serve", "serving size", "amount per serving", "calories",
+    "added colour", "added flavor", "added flavour", "artificial flavour",
+    "no added", "preservatives", "allergen", "contains", "storage",
+    "best before", "use by", "expiry", "batch no", "lot no", "net quantity",
+    "mrp", "maximum retail price", "inclusive of all taxes",
+    "manufactured by", "packed by", "marketed by", "imported by",
+    "customer care", "consumer care", "toll free", "country of origin",
+    "fssai", "license no", "lic no", "green card", "veg", "non-veg"
+  ],
+  "commodity_name_reject_note": "Phrases that must never be read as the commodity's generic name even when they are the tallest text left standing. Nutrition-table headers and other boilerplate are often the most prominent type on a back panel; matching them produced findings like 'Energy' as a product name.",
+
+  "exemptions": [
+    {
+      "rule_id": "PACK_TOO_SMALL",
+      "description": "Packages of net quantity below 10 g or 10 ml (other than tobacco) are exempt from most declarations.",
+      "citation": "Rule 26(a)",
+      "trigger": "net_qty_below_10"
+    },
+    {
+      "rule_id": "WHOLESALE_LARGE_PACK",
+      "description": "Packages above 25 kg / 25 litre (50 kg for cement and fertiliser) are wholesale packages governed by a different chapter.",
+      "citation": "Chapter III, Rule 24",
+      "trigger": "net_qty_above_25kg"
+    },
+    {
+      "rule_id": "ELECTRONICS_QR",
+      "description": "Electronic products may carry certain descriptive declarations via QR code instead of printing them on the pack.",
+      "citation": "LM(PC) Second Amendment Rules, 2022",
+      "trigger": "category_electronics"
+    }
+  ],
+
+  "cross_field_rules": [
+    {
+      "rule_id": "MRP_MISSING_INCLUSIVE_TAX_WORDING",
+      "description": "MRP is declared but the mandatory 'inclusive of all taxes' qualifier was not found.",
+      "citation": "Rule 18(2)",
+      "severity": "major"
+    },
+    {
+      "rule_id": "FONT_TOO_SMALL",
+      "description": "A principal declaration is printed below the minimum height for this pack size.",
+      "citation": "Rule 7(3)",
+      "severity": "major"
+    },
+    {
+      "rule_id": "ORIGIN_PREFIX_MISMATCH",
+      "description": "The GS1 company prefix in the barcode was issued outside India while the pack declares Indian origin, or vice versa. Not an offence by itself - GS1 prefixes indicate where the number was licensed, not where goods were made - but a documented mismatch worth verifying at inspection.",
+      "citation": "Rule 6(1)(g); GS1 General Specifications s.1.4",
+      "severity": "advisory"
+    },
+    {
+      "rule_id": "IMPORTED_WITHOUT_ORIGIN",
+      "description": "The pack identifies an importer but declares no country of origin.",
+      "citation": "Rule 6(1)(g), Rule 27",
+      "severity": "major"
+    },
+    {
+      "rule_id": "MFG_DATE_IN_FUTURE",
+      "description": "The declared month and year of manufacture is later than the date of inspection.",
+      "citation": "Rule 6(1)(d)",
+      "severity": "major"
+    },
+    {
+      "rule_id": "LOW_CONFIDENCE_CAPTURE",
+      "description": "Capture quality was too poor for the reading to be relied on; the operator was asked to retake rather than being given an uncertain verdict.",
+      "citation": "Operational control, not a statutory rule",
+      "severity": "advisory"
+    }
+  ],
+
+  "ecommerce_required_fields": [
+    "MANUFACTURER_NAME_ADDRESS",
+    "COMMODITY_NAME",
+    "NET_QUANTITY",
+    "MRP",
+    "CONSUMER_CARE",
+    "COUNTRY_OF_ORIGIN"
+  ],
+  "ecommerce_citation": "Rule 6(10), inserted by the LM(PC) (Amendment) Rules, 2017"
+}

@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Administration &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Users and audit trail</h1>    <p class="lede">Role-based access: inspectors scan and file, auditors read, admins
+manage accounts. Every login, scan, batch run and complaint is written to an
+append-only audit log &mdash; an enforcement tool whose outputs may be relied on
+in proceedings has to be able to say who did what and when.</p>
+<p class="help">New accounts should change their password on first sign-in; the
+demo passwords below are for the demonstration only.</p>
+
+<div class="split">
+<div>
+  <h2>Accounts</h2>
+  <div class="table-scroll"><table>
+    <tr><th>Username</th><th>Name</th><th>Role</th><th>Jurisdiction</th></tr>
+    {% for u in users %}
+    <tr><td class="mono">{{ u.username }}</td><td>{{ u.display_name }}</td>
+        <td><span class="pill">{{ u.role }}</span></td><td>{{ u.jurisdiction }}</td></tr>
+    {% endfor %}
+  </table></div>
+  <p class="help" style="margin-top:14px">The full audit trail now lives on its own
+    page, where it can be filtered and where the audit cell can review it
+    read-only: <a href="{{ url_for('audit_log') }}">open the audit log &rarr;</a></p>
+</div>
+<div>
+  <div class="card">
+    <h3>Add a user</h3>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="u">Username</label><input id="u" name="username" required>
+      <label for="p">Password</label><input id="p" name="password" type="password" required>
+      <label for="d">Display name</label><input id="d" name="display_name">
+      <label for="r">Role</label>
+      <select id="r" name="role">
+        <option value="inspector">Inspector</option>
+        <option value="auditor">Auditor (read only)</option>
+        <option value="admin">Administrator</option>
+      </select>
+      <label for="j">Jurisdiction</label><input id="j" name="jurisdiction">
+      <div style="margin-top:14px"><button class="btn" style="width:100%">Create</button></div>
+    </form>
+  </div>
+</div>
+</div>
+{% endblock %}

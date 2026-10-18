@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.freebuff/
+data/secret.key
+data/*.db
+data/*.db-wal
+data/*.db-shm
+data/listing_ocr_cache.json
+static/uploads/*.jpg
+static/uploads/*.png
+static/reports/*.pdf
+venv/
+.venv/

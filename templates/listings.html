@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}E-commerce monitoring &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>E-commerce listing monitoring</h1>
+<p class="lede">Rule 6(10), inserted by the 2017 amendment, requires an online
+listing to carry the same mandatory declarations the pack does. Sellers often
+upload that block as a JPEG instead of page text, which defeats an ordinary
+scraper &mdash; so image assets are pushed through the same OCR pipeline as a
+physical label before the rule engine sees them.</p>
+<p class="help" style="margin-bottom:18px"><b>Citation:</b> {{ citation }} &middot;
+  last sweep: {{ last_sweep or 'never' }} &middot; next scheduled: {{ next_sweep }}
+  &middot; {{ corpus|length }} cached listing snapshots.</p>
+
+<div class="split">
+<div>
+  {% if user.role != 'auditor' %}
+  <form method="post" style="margin-bottom:16px">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn">Run the scheduled sweep now</button>
+    <span class="help">Fetching runs as a backend job on a schedule; the checker
+      reads the cache, so this works with no network at all.</span>
+  </form>
+  {% else %}
+  <p class="help" style="margin-bottom:16px">Read-only access: sweeps and the
+    paste-checker are restricted to field roles; the results are live.</p>
+  {% endif %}
+
+  {% if summary %}
+  <div class="grid g3">
+    <div class="stat"><div class="n">{{ summary.total }}</div><div class="l">Listings checked</div></div>
+    <div class="stat bad"><div class="n">{{ summary.non_compliant }}</div><div class="l">Non-compliant</div></div>
+    <div class="stat warn"><div class="n">{{ summary.rate }}%</div><div class="l">Failure rate</div></div>
+  </div>
+
+  <h2>Results</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Platform</th><th>Listing</th><th>Seller</th><th>Source</th><th>Verdict</th><th>Missing declarations</th></tr>
+    {% for r in results %}
+    <tr class="{{ 'flag' if r.verdict != 'COMPLIANT' }}">
+      <td>{{ r.platform }}</td>
+      <td>{{ r.title }}</td>
+      <td>{{ r.seller }}</td>
+      <td class="help">{{ r.source_kind }}</td>
+      <td><span class="verdict v-{{ r.verdict }}">{{ r.verdict.replace('_',' ') }}</span></td>
+      <td>{% for m in r.missing %}<span class="pill no">{{ m.label }}</span>{% else %}—{% endfor %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+
+  <h2>Which declaration goes missing most</h2>
+  {% for label, count in summary.field_tally.items() %}
+  <div class="barrow">
+    <span>{{ label }}</span>
+    <span class="bar"><i style="width:{{ (count / summary.non_compliant * 100)|round }}%;background:var(--red)"></i></span>
+    <span class="mono">{{ count }}</span>
+  </div>
+  {% endfor %}
+  {% endif %}
+
+  {% if pasted %}
+  <h2>Pasted listing</h2>
+  <div class="banner b-{{ pasted.verdict }}">
+    <h1>{{ pasted.verdict.replace('_',' ') }}</h1>
+    <p>{{ pasted.missing|length }} mandatory declaration(s) missing under {{ pasted.citation }}</p>
+  </div>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Declaration</th><th>Rule</th><th>Status</th><th>Found in the listing</th></tr>
+    {% for key, val in pasted.found.items() %}
+    <tr class="{{ 'flag' if not val }}">
+      <td>{{ key.replace('_',' ').title() }}</td>
+      <td class="mono">—</td>
+      <td>{% if val %}<span class="pill ok">found</span>{% else %}<span class="pill no">missing</span>{% endif %}</td>
+      <td>{{ val or '—' }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+  {% endif %}
+</div>
+
+<div>
+  <div class="card">
+    {% if user.role != 'auditor' %}
+    <h3>Check a listing by hand</h3>
+    <form method="post">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <label for="p">Paste the product page text</label>
+      <textarea id="p" name="pasted" style="min-height:190px" placeholder="Paste the description and product-information block from any marketplace listing."></textarea>
+      <div style="margin-top:12px"><button class="btn" style="width:100%">Check this listing</button></div>
+    </form>
+    <p class="help">This is what an official reviewing one specific complaint
+      would use: the same rule engine, applied to a listing instead of a pack.</p>
+    {% else %}
+    <h3>Check a listing by hand</h3>
+    <p class="help">The paste-checker is an inspector action; as a read-only
+      reviewer you see every sweep result this page produces.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Cached snapshots</h3>
+    <div class="table-scroll">
+    <table>
+      {% for l in corpus %}
+      <tr><td class="mono">{{ l.id }}</td><td>{{ l.title }}
+        {% if l.declaration_images %}<span class="pill">image asset</span>{% endif %}</td></tr>
+      {% endfor %}
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

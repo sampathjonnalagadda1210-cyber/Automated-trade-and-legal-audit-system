@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% block title %}Complaint &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>{{ ui.file_complaint }}</h1>
+<p class="lede">The scan has already produced the evidence: the photograph, the
+declarations read off the pack, and the rule each finding is based on. The form
+below only asks for who is complaining &mdash; everything else is carried over,
+which is what makes this one tap rather than a form-filling exercise.</p>
+
+<div class="langbar">
+  {% for code, name in languages.items() %}
+    <a href="{{ url_for('complaint', scan_id=scan.id, lang=code) }}"
+       class="{{ 'on' if lang==code }}">{{ name }}</a>
+  {% endfor %}
+</div>
+
+<div class="split">
+<div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <input type="hidden" name="lang" value="{{ lang }}">
+    <div class="card">
+      <div class="grid g2">
+        <div><label for="c">Your name</label>
+          <input id="c" name="complainant" type="text"></div>
+        <div><label for="ct">Phone or email</label>
+          <input id="ct" name="contact" type="text"></div>
+      </div>
+      <label for="b">Anything you want to add</label>
+      <textarea id="b" name="body" placeholder="Where you bought it, what you were charged, anything the photograph does not show."></textarea>
+      <p class="help">The complaint is stored on the device and uploaded to the
+        department when the link is available &mdash; it is not lost if you are
+        standing in a basement with no signal.</p>
+      <div style="margin-top:14px">
+        <button class="btn warn">Generate the complaint (PDF)</button>
+      </div>
+    </div>
+  </form>
+
+  <h2>Grounds carried into the complaint</h2>
+  {% for v in scan.violations if v.severity != 'advisory' %}
+    <div class="finding {{ v.severity }}">
+      <span class="cite">{{ v.citation }}</span>
+      <p>{{ v.description }}</p>
+    </div>
+  {% else %}
+    <div class="alert alert-info">This pack raised no findings, so there is
+      nothing to complain about.</div>
+  {% endfor %}
+</div>
+
+<div>
+  <div class="card evidence">
+    <h3>Evidence attached</h3>
+    <img src="{{ url_for('static', filename='uploads/' ~ (scan.overlay_file or scan.image_file)) }}" alt="Label">
+    <p class="legend">{{ scan.uid }} &middot; {{ scan.created_at.replace('T',' ') }}
+      {% if scan.barcode %}&middot; {{ scan.barcode }}{% endif %}</p>
+  </div>
+  {% for p in panels %}
+  <div class="right-panel">
+    <div class="lbl" style="margin-top:0">{{ ui.your_right }}</div>
+    <div>{{ p.right }}</div>
+  </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}

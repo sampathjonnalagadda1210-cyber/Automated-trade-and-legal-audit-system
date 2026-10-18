@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Batch processing &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Batch processing</h1>
+<p class="lede">A warehouse audit produces a folder of photographs, not one
+photograph. Every image goes through exactly the same pipeline a single scan
+uses &mdash; the same calibration, the same rule engine &mdash; so the batch
+result and the on-screen result for a given pack can never disagree. One
+consolidated PDF comes out at the end, and each pack keeps its own full report.</p>
+
+{% if user.role != 'auditor' %}
+<form method="post" enctype="multipart/form-data">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <div class="card">
+    <div class="grid g2">
+      <div>
+        <label for="f">Upload a folder of label photos</label>
+        <input id="f" name="frames" type="file" accept="image/*" multiple>
+        <label for="loc">Premises</label>
+        <input id="loc" name="location" type="text" placeholder="Godown / market">
+      </div>
+      <div>
+        <h3>Or run the bundled demo batch</h3>
+        <p class="help">{{ available|length }} labels are bundled, deliberately
+          mixed: compliant packs, a pack with Rule 7 font violations, an imported
+          pack with no country of origin, and a pack with no MRP at all.</p>
+        <button class="btn alt" name="use_samples" value="1">Run the demo batch
+          ({{ available|length }} labels)</button>
+      </div>
+    </div>
+    <div style="margin-top:14px"><button class="btn">Process uploaded images</button></div>
+  </div>
+</form>
+{% else %}
+<p class="help" style="margin-bottom:16px">Read-only access: batch processing is
+  a field-role action. Completed batches appear in the repository below.</p>
+{% endif %}
+
+{% if summary %}
+<div class="grid g4">
+  <div class="stat"><div class="n">{{ summary.total }}</div><div class="l">Packs processed</div></div>
+  <div class="stat good"><div class="n">{{ summary.compliant }}</div><div class="l">Compliant</div></div>
+  <div class="stat bad"><div class="n">{{ summary.flagged }}</div><div class="l">Flagged</div></div>
+  <div class="stat warn"><div class="n">{{ summary.findings }}</div><div class="l">Total findings</div></div>
+</div>
+
+{% if report %}
+<p style="margin:16px 0">
+  <a class="btn" href="{{ url_for('static', filename='reports/' ~ report) }}">Download the consolidated batch report (PDF)</a>
+</p>
+{% endif %}
+
+<h2>Results</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>File</th><th>Product read</th><th>Barcode</th><th>Verdict</th><th>Provisions contravened</th><th></th></tr>
+  {% for r in results %}
+  <tr class="{{ 'flag' if r.verdict not in ('COMPLIANT','ERROR') }}">
+    <td class="mono">{{ r.filename }}</td>
+    <td>{{ r.product }}</td>
+    <td class="mono">{{ r.barcode or '—' }}</td>
+    <td><span class="verdict v-{{ r.verdict }}">{{ r.verdict.replace('_',' ') }}</span></td>
+    <td class="mono">{% for v in r.violations %}{{ v.citation }}{{ '; ' if not loop.last }}{% else %}—{% endfor %}</td>
+    <td>{% if r.scan_id %}<a class="btn alt sm" href="{{ url_for('scan_result', scan_id=r.scan_id) }}">Open</a>{% endif %}</td>
+  </tr>
+  {% endfor %}
+</table>
+</div>
+{% endif %}
+{% endblock %}

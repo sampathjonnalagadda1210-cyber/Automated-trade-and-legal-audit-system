@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Audit log &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Audit log</h1>
+<p class="lede">The append-only trail of who did what on this device:
+sign-ins, scans, batches, complaints, sync events. The audit cell
+reviews this view read-only; nothing here can be edited or deleted.</p>
+
+<form class="card" method="get">
+  <div class="grid g3">
+    <div><label for="a">Action</label>
+      <select id="a" name="action">
+        <option value="">All actions</option>
+        {% for a in actions %}
+        <option value="{{ a }}" {{ 'selected' if action==a }}>{{ a }}</option>
+        {% endfor %}
+      </select></div>
+    <div><label>&nbsp;</label><button class="btn" style="width:100%">Filter</button></div>
+  </div>
+</form>
+
+<p class="help" style="margin-bottom:10px">{{ total }} entr{{ 'y' if total==1 else 'ies' }}
+  &middot; page {{ page }} of {{ pages }}</p>
+
+<div class="table-scroll"><table>
+  <tr><th>When</th><th>User</th><th>Action</th><th>Entity</th></tr>
+  {% for e in entries %}
+  <tr>
+    <td class="mono">{{ e.at[:16].replace('T',' ') }}</td>
+    <td>{% if e.user_id %}{{ users.get(e.user_id, '—') }}{% else %}<i>anonymous</i>{% endif %}</td>
+    <td><span class="pill na">{{ e.action }}</span></td>
+    <td class="mono">{{ e.entity }}</td>
+  </tr>
+  {% else %}
+  <tr><td colspan="4">No entries match this filter.</td></tr>
+  {% endfor %}
+</table></div>
+
+<div class="pager">
+  {% if page > 1 %}
+  <a class="btn alt sm" href="{{ url_for('audit_log', action=action, page=page-1) }}">&larr; Newer</a>
+  {% endif %}
+  <span class="help">Showing {{ entries|length }} of {{ total }}</span>
+  {% if page < pages %}
+  <a class="btn alt sm" href="{{ url_for('audit_log', action=action, page=page+1) }}">Older &rarr;</a>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+# A.T.L.A.S. - Python dependencies
+#
+# Six packages. There is deliberately no ORM and no login library: the app
+# uses the standard library's sqlite3 and Flask's own signed sessions, which
+# removes two installs that commonly fail on a fresh machine.
+#
+# Install with:   pip install -r requirements.txt
+
+Flask>=3.0
+opencv-python>=4.8
+numpy>=1.24
+Pillow>=10.0
+pytesseract>=0.3.10
+reportlab>=4.0

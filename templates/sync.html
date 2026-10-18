@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Sync console &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Offline queue and sync</h1>
+<p class="lede">Inspectors work in godowns, basements and rural markets. A tool
+that needs a network round-trip to give a verdict is useless exactly where it is
+needed most &mdash; so every scan is decided entirely on this device and written
+to a local queue. A background thread drains the queue whenever the link comes
+back. Switch the device offline below, run a few scans, and watch the two
+databases diverge and then reconcile.</p>
+
+<div class="grid g4">
+  <div class="stat {{ 'good' if online else 'warn' }}">
+    <div class="n">{{ 'ONLINE' if online else 'OFFLINE' }}</div><div class="l">Link state</div></div>
+  <div class="stat warn"><div class="n">{{ counts.scans }}</div><div class="l">Scans queued</div></div>
+  <div class="stat warn"><div class="n">{{ counts.complaints }}</div><div class="l">Complaints queued</div></div>
+  <div class="stat good"><div class="n">{{ counts.synced }}</div><div class="l">Scans uploaded</div></div>
+</div>
+
+{% if user.role != 'auditor' %}
+<div style="margin:18px 0">
+  <form method="post" action="{{ url_for('sync_toggle') }}" class="inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn {{ 'warn' if online }}">{{ 'Simulate losing the network' if online else 'Reconnect the device' }}</button>
+  </form>
+  <form method="post" action="{{ url_for('sync_flush') }}" class="inline">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button class="btn alt">Force a push now</button>
+  </form>
+</div>
+{% else %}
+<p class="help" style="margin:18px 0">Read-only access: link controls are
+  restricted to field roles. The queue state and log below are live.</p>
+{% endif %}
+
+<div class="split">
+<div>
+  <h2>What the central server has received</h2>
+  <div class="table-scroll"><table>
+    <tr><th>Scan</th><th>Device</th><th>Inspector</th><th>Product</th><th>Verdict</th><th>Received</th></tr>
+    {% for r in central.recent %}
+    <tr><td class="mono">{{ r.uid }}</td><td class="mono">{{ r.device_id }}</td>
+      <td>{{ r.inspector or '—' }}</td><td>{{ r.product_name }}</td>
+      <td><span class="verdict v-{{ r.verdict }}">{{ r.verdict.replace('_',' ') }}</span></td>
+      <td class="mono">{{ r.received_at[11:16] }}</td></tr>
+    {% else %}
+    <tr><td colspan="6">Nothing has reached the server yet.</td></tr>
+    {% endfor %}
+  </table></div>
+
+  <h2>Reporting devices</h2>
+  <div class="table-scroll"><table>
+    <tr><th>Device</th><th>Scans</th><th>Last contact</th></tr>
+    {% for d in central.devices %}
+    <tr><td class="mono">{{ d.device_id }}</td><td class="mono">{{ d.c }}</td>
+        <td class="mono">{{ d.last }}</td></tr>
+    {% else %}<tr><td colspan="3">No devices have reported yet.</td></tr>{% endfor %}
+  </table></div>
+</div>
+
+<div>
+  <div class="card">
+    <h3>Sync log</h3>
+    <div class="table-scroll">
+    <table>
+      {% for l in log %}
+      <tr><td class="mono" style="white-space:nowrap">{{ l.at[11:19] }}</td>
+          <td>{{ l.detail or l.event }}</td></tr>
+      {% else %}<tr><td class="help">Nothing logged yet.</td></tr>{% endfor %}
+    </table>
+    </div>
+  </div>
+  <div class="card">
+    <h3>How this is wired</h3>
+    <p class="help">The device writes to <span class="mono">data/atlas.db</span>;
+      the departmental server is <span class="mono">data/central.db</span>. The
+      transfer is a local database write rather than an HTTP call, which keeps
+      the whole system runnable with no network. Swapping one function for a
+      POST to a real endpoint is the only change a deployment needs.</p>
+  </div>
+</div>
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}A.T.L.A.S.{% endblock %}</title>
+<link rel="icon" type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%2314323f'/%3E%3Ctext%20x='16'%20y='22'%20font-family='Arial,sans-serif'%20font-size='16'%20font-weight='bold'%20fill='%23e0a45f'%20text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#14323f">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+{% if user %}
+<header class="topbar">
+  <div class="brand">
+    <span class="mark">A<span class="dot">.</span>T<span class="dot">.</span>L<span class="dot">.</span>A<span class="dot">.</span>S</span>
+    <span class="brand-sub">Automated Trade &amp; Legal Audit System</span>
+  </div>
+  <nav>
+    <a href="{{ url_for('dashboard') }}" class="{{ 'on' if request.endpoint=='dashboard' }}">Dashboard</a>
+    {% if user.role != 'auditor' %}
+    <a href="{{ url_for('scan_new') }}" class="{{ 'on' if request.endpoint in ('scan_new','scan_result') }}">Scan</a>
+    <a href="{{ url_for('batch') }}" class="{{ 'on' if request.endpoint=='batch' }}">Batch</a>
+    {% endif %}
+    <a href="{{ url_for('repository') }}" class="{{ 'on' if request.endpoint=='repository' }}">Repository</a>
+    <a href="{{ url_for('complaints_register') }}" class="{{ 'on' if request.endpoint=='complaints_register' }}">Complaints</a>
+    <a href="{{ url_for('rules_view') }}" class="{{ 'on' if request.endpoint=='rules_view' }}">Rules</a>
+    <a href="{{ url_for('listings') }}" class="{{ 'on' if request.endpoint=='listings' }}">E-commerce</a>
+    {% if user.role in ('admin', 'auditor') %}<a href="{{ url_for('audit_log') }}" class="{{ 'on' if request.endpoint=='audit_log' }}">Audit log</a>{% endif %}
+    {% if user.role == 'admin' %}<a href="{{ url_for('admin_users') }}" class="{{ 'on' if request.endpoint=='admin_users' }}">Admin</a>{% endif %}
+  </nav>
+  <div class="status">
+    <a href="{{ url_for('sync_view') }}" class="chip {{ 'chip-on' if online else 'chip-off' }}">
+      {{ 'ONLINE' if online else 'OFFLINE' }}
+      {% if queue.scans %}<b>&nbsp;{{ queue.scans }} queued</b>{% endif %}
+    </a>
+    {% if user.role != 'auditor' %}
+    <form method="post" action="{{ url_for('sync_toggle') }}" class="inline">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <button class="linkish" type="submit">{{ 'Go offline' if online else 'Go online' }}</button>
+    </form>
+    {% endif %}
+    <span class="who">{{ user.display_name or user.username }} &middot; {{ user.role }}</span>
+    <a class="linkish" href="{{ url_for('logout') }}">Sign out</a>
+  </div>
+</header>
+{% endif %}
+
+<main class="{% block main_class %}wrap{% endblock %}">
+  {% if user and not tesseract_ok %}
+    <div class="alert alert-danger">
+      <b>OCR engine not found.</b> {{ tesseract_msg }}
+      Scans will fail until Tesseract is installed. Everything else on the site still works.
+    </div>
+  {% endif %}
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</main>
+
+<script>
+(function(){
+  /* File inputs light up as drop zones when files are dragged over them. */
+  document.querySelectorAll('input[type=file]').forEach(function(f){
+    f.classList.add('file-drop');
+    ['dragover','dragenter'].forEach(function(ev){
+      f.addEventListener(ev,function(e){e.preventDefault();f.classList.add('dragover');});
+    });
+    ['dragleave','drop'].forEach(function(ev){
+      f.addEventListener(ev,function(){f.classList.remove('dragover');});
+    });
+  });
+  /* Flash notices fade out on their own after a few seconds. */
+  document.querySelectorAll('.alert').forEach(function(a){
+    setTimeout(function(){
+      a.classList.add('alert-out');
+      setTimeout(function(){a.remove();},550);
+    },6000);
+  });
+  /* Busy state: while a form is in flight its buttons are
+     disabled and labelled, so nothing is submitted twice. */
+  document.querySelectorAll('form').forEach(function(f){
+    f.addEventListener('submit',function(){
+      f.querySelectorAll('button').forEach(function(b){
+        if(b.disabled) return;
+        b.disabled = true;
+        if(!b.classList.contains('linkish') && b.textContent.trim()){
+          b.textContent = 'Working…';
+        }
+      });
+    });
+  });
+})();
+</script>
+
+{% if user %}
+<footer class="foot">
+  Device <b>{{ device_id }}</b> &middot; rule set <b>{{ rule_version }}</b> &middot;
+  Legal Metrology (Packaged Commodities) Rules, 2011 &middot;
+  machine-assisted findings, subject to officer verification
+</footer>
+{% endif %}
+</body>
+</html>

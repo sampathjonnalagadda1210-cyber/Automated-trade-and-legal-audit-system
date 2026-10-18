@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign in &middot; A.T.L.A.S.</title>
+<link rel="icon" type="image/svg+xml"
+      href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2032%2032'%3E%3Crect%20width='32'%20height='32'%20rx='7'%20fill='%2314323f'/%3E%3Ctext%20x='16'%20y='22'%20font-family='Arial,sans-serif'%20font-size='16'%20font-weight='bold'%20fill='%23e0a45f'%20text-anchor='middle'%3EA%3C/text%3E%3C/svg%3E">
+<meta name="theme-color" content="#14323f">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"></head>
+<body><div class="login-shell"><div class="login-card">
+  <div class="mark">A<span class="dot">.</span>T<span class="dot">.</span>L<span class="dot">.</span>A<span class="dot">.</span>S</div>
+  <p class="lede" style="margin:6px 0 20px;font-size:13px">
+    Automated Trade &amp; Legal Audit System &mdash; packaged-commodity compliance
+    under the Legal Metrology (Packaged Commodities) Rules, 2011.</p>
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% for c,m in messages %}<div class="alert alert-{{ c }}">{{ m }}</div>{% endfor %}
+  {% endwith %}
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <label for="u">Username</label>
+    <input id="u" name="username" type="text" autofocus required>
+    <label for="p">Password</label>
+    <input id="p" name="password" type="password" required>
+    <div style="margin-top:20px"><button class="btn" style="width:100%">Sign in</button></div>
+  </form>
+  <div class="demo-accounts">
+    <b>Demo accounts</b> <span style="font-weight:400">(click a username to fill)</span><br>
+    <code>admin</code> / <code>admin123</code> &mdash; state HQ, full access<br>
+    <code>inspector1</code> / <code>inspector123</code> &mdash; field inspector<br>
+    <code>auditor</code> / <code>auditor123</code> &mdash; read-only audit cell
+  </div>
+</div></div>
+<script>
+/* Presentation polish: clicking a demo username/password fills the form. */
+(function(){
+  var u=document.getElementById('u'), p=document.getElementById('p');
+  var pairs=[['admin','admin123'],['inspector1','inspector123'],['auditor','auditor123']];
+  var codes=document.querySelectorAll('.demo-accounts code');
+  for(var i=0;i<codes.length;i++){
+    (function(code){
+      var pair=pairs.filter(function(pr){return pr[0]===code.textContent||pr[1]===code.textContent;})[0];
+      if(!pair) return;
+      code.style.cursor='pointer'; code.title='Click to fill';
+      code.addEventListener('click',function(){
+        u.value=pair[0]; p.value=pair[1]; u.focus();
+      });
+    })(codes[i]);
+  }
+})();
+</script>
+</body></html>

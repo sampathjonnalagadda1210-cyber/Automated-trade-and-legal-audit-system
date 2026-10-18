@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Official complaint &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Official complaint &mdash; formal memo</h1>
+<p class="lede">This generates the complaint an inspector files with the
+department &mdash; not the shopper's grievance letter. Every substantive part
+is drafted from the stored scan: the pack particulars, the numbered grounds
+with their statutory citations, the powers invoked and the annexures. You
+confirm the addressee and the place, generate, print, sign and submit.</p>
+
+<div class="split">
+<div>
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="card">
+      <h3>From (pre-filled from your account)</h3>
+      <div class="grid g2">
+        <div><label for="on">Officer name</label>
+          <input id="on" name="officer_name" type="text"
+                 value="{{ officer.display_name or officer.username }}"></div>
+        <div><label for="dg">Designation</label>
+          <input id="dg" name="designation" type="text"
+                 value="{{ officer.role == 'inspector' and 'Legal Metrology Inspector' or officer.role|capitalize }}"></div>
+      </div>
+      <div class="grid g2">
+        <div><label for="ju">Jurisdiction</label>
+          <input id="ju" name="jurisdiction" type="text"
+                 value="{{ officer.jurisdiction or '' }}"></div>
+        <div><label for="ad">Addressed to</label>
+          <input id="ad" name="addressee" type="text"
+                 value="The Controller, Department of Legal Metrology"></div>
+      </div>
+
+      <h3 style="margin-top:18px">Circumstances</h3>
+      <div class="grid g2">
+        <div><label for="pl">Place of inspection / seizure</label>
+          <input id="pl" name="place" type="text" value="{{ scan.location or '' }}"></div>
+        <div><label for="ac">Prayer</label>
+          <select id="ac" name="action">
+            <option value="prosecution">Prosecution + seizure (s.32 / s.18)</option>
+            <option value="seizure">Seizure and relabel only</option>
+          </select></div>
+      </div>
+      <label for="nt">Officer's remarks (optional, appear in the memo)</label>
+      <textarea id="nt" name="notes"
+        placeholder="e.g. trader was advised on the spot; batch no. and stock position noted; samples retained."></textarea>
+
+      <div style="margin-top:14px">
+        <button class="btn warn">Generate the complaint memo (PDF)</button>
+      </div>
+      <p class="help">The memo opens as a PDF: sign it in ink and submit. The
+        draft is stored against this scan, and you can mark it submitted from
+        the scan page once it is filed.</p>
+    </div>
+  </form>
+
+  <h2>Grounds that will be carried into the memo</h2>
+  {% for v in violations %}
+    <div class="finding {{ v.severity }}">
+      <span class="sev">{{ v.severity }}</span>
+      <span class="cite">Ground {{ loop.index }} &mdash; {{ v.citation }}</span>
+      <p>{{ v.description }}</p>
+    </div>
+  {% else %}
+    <div class="alert alert-info">This scan has no major or minor findings, so
+      there is nothing to complain about.</div>
+  {% endfor %}
+</div>
+
+<div>
+  <div class="card evidence">
+    <h3>Annexure A &mdash; evidence</h3>
+    <img src="{{ url_for('static', filename='uploads/' ~ (scan.overlay_file or scan.image_file)) }}" alt="Annotated label">
+    <p class="legend">{{ scan.uid }} &middot; {{ scan.created_at.replace('T',' ') }}
+      {% if scan.barcode %}&middot; barcode {{ scan.barcode }}{% endif %}</p>
+  </div>
+  <div class="card">
+    <h3>What the memo contains</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><td>1. Particulars</td><td>product, manufacturer, barcode, place, calibration</td></tr>
+      <tr><td>2. Grounds</td><td>each contravention, cited</td></tr>
+      <tr><td>3. Evidence</td><td>annotated photo + declaration table</td></tr>
+      <tr><td>4. Prayer</td><td>prosecution (s.32) and/or seizure (s.18)</td></tr>
+      <tr><td>5. Verification</td><td>officer's statement + signature block</td></tr>
+      <tr><td>Annexure B</td><td>declaration-wise examination of the label</td></tr>
+    </table>
+    </div>
+  </div>
+  <a class="btn alt" style="width:100%;text-align:center"
+     href="{{ url_for('scan_result', scan_id=scan.id) }}">&larr; back to the scan</a>
+</div>
+</div>
+{% endblock %}

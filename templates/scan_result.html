@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}Scan {{ scan.uid }} &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+{% set ctx = result.context %}
+{% set gate = result.gate %}
+
+<div class="banner b-{{ scan.verdict }}">
+  <h1>{{ scan.verdict.replace('_',' ').replace('NON COMPLIANT','NON-COMPLIANT') }}</h1>
+  <p>{{ scan.product_name }} &middot; scan {{ scan.uid }} &middot; {{ scan.created_at.replace('T',' ') }}
+    &middot; {{ result.summary.major }} major, {{ result.summary.minor }} minor,
+    {{ result.summary.advisory }} advisory</p>
+</div>
+
+<div class="split">
+<div>
+  {% if merge and merge.frames > 1 %}
+  <div class="alert alert-info">
+    <b>Multi-frame glare recovery.</b> {{ merge.frames }} frames fused
+    ({{ merge.aligned }} registered onto the reference by feature matching).
+    Specular loss fell from {{ merge.glare_before }}% to {{ merge.glare_after }}%
+    of the frame &mdash; {{ merge.recovered_pct }}% of the label recovered that no
+    single frame could read.
+  </div>
+  {% endif %}
+
+  <h2>Findings</h2>
+  {% if not scan.violations %}
+    <div class="finding" style="border-left-color:var(--green)">
+      <span class="cite">No contravention detected</span>
+      <p>Every declaration required for a pack of this size was present, and the
+         MRP and net quantity are printed at or above the Rule 7(3) minimum.</p>
+    </div>
+  {% endif %}
+  {% for v in scan.violations %}
+    <div class="finding {{ v.severity }}">
+      <span class="sev">{{ v.severity }}</span>
+      <span class="cite">{{ v.citation }}</span>
+      <p>{{ v.description }}</p>
+    </div>
+  {% endfor %}
+
+  {% if result.exemptions %}
+    <h2>Exemptions applied</h2>
+    {% for e in result.exemptions %}
+      <div class="finding advisory">
+        <span class="cite">{{ e.citation }}</span>
+        <p>{{ e.description }}</p>
+      </div>
+    {% endfor %}
+  {% endif %}
+
+  <h2>Declarations examined</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Declaration</th><th>Rule</th><th>Status</th><th>Read from the label</th><th>Height</th></tr>
+    {% for key, f in result.field_results.items() %}
+    <tr class="{{ 'flag' if not f.found and not f.skipped_reason }}">
+      <td>{{ f.label }}</td>
+      <td class="mono">{{ f.citation }}</td>
+      <td>{% if f.skipped_reason %}<span class="pill na">n/a</span>
+          {% elif f.found %}<span class="pill ok">found</span>
+          {% else %}<span class="pill no">missing</span>{% endif %}</td>
+      <td>{{ f.matched_text or f.skipped_reason or '—' }}</td>
+      <td class="mono">{% if f.measured_height_mm %}{{ '%.2f'|format(f.measured_height_mm) }} mm{% else %}—{% endif %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  </div>
+  <p class="help">Rule 7(3) minimum applied to this pack:
+    <b>{{ '%.1f'|format(ctx.required_height_mm) }} mm</b> (band: {{ ctx.height_band }}).
+    Heights are the ink extent of the numerals, converted to millimetres using the
+    barcode as the dimensional reference &mdash; not the OCR bounding box, which
+    would include descenders.</p>
+
+  {% if consumer %}
+  <h2>Consumer view</h2>
+  <div class="langbar">
+    {% for code, name in languages.items() %}
+      <a href="{{ url_for('scan_result', scan_id=scan.id, lang=code, consumer=1) }}"
+         class="{{ 'on' if lang==code }}">{{ name }}</a>
+    {% endfor %}
+    <a href="{{ url_for('scan_result', scan_id=scan.id) }}" class="lang-toggle">&larr; back to officer view</a>
+  </div>
+  {% if panels %}
+    {% for p in panels %}
+    <div class="right-panel">
+      <div class="lbl" style="margin-top:0">{{ ui.your_right }} &middot; {{ p.citation }}</div>
+      <div>{{ p.right }}</div>
+      <div class="lbl">{{ ui.what_to_do }}</div>
+      <div>{{ p.action }}</div>
+    </div>
+    {% endfor %}
+    <div class="right-panel" style="border-left-color:var(--muted)">
+      <div class="lbl" style="margin-top:0">{{ ui.escalate }}</div>
+      <div>{{ ui.escalate_body }}</div>
+    </div>
+    <a class="btn warn" href="{{ url_for('complaint', scan_id=scan.id, lang=lang) }}">
+      {{ ui.file_complaint }} &rarr;</a>
+  {% else %}
+    <div class="right-panel" style="border-left-color:var(--green)">
+      <div class="lbl" style="margin-top:0">{{ ui.compliant_title }}</div>
+      <div>{{ ui.compliant_body }}</div>
+    </div>
+  {% endif %}
+  {% else %}
+
+  {% if user.role != 'auditor' %}
+  <h2>Official complaint &mdash; ready to submit</h2>
+  <p class="help">The inspection report records what was found; a complaint is
+    what sets the law in motion. Generate a formal complaint memo in the
+    standard departmental format, pre-filled from this scan, sign it, and it is
+    ready to submit &mdash; no retyping, no copy-paste between documents.</p>
+  {% if official_drafts %}
+    <div class="table-scroll">
+    <table>
+      <tr><th>Reference</th><th>Prepared</th><th>Status</th><th></th></tr>
+      {% for d in official_drafts %}
+      <tr>
+        <td class="mono">{{ d.reference }}</td>
+        <td class="mono">{{ d.created_at[:16].replace('T',' ') }}</td>
+        <td><span class="pill {{ 'ok' if d.status=='SUBMITTED' else 'na' }}">{{ d.status }}</span></td>
+        <td><a href="{{ url_for('static', filename='reports/' ~ d.pdf_file) }}">open PDF &rarr;</a>
+          {% if d.status != 'SUBMITTED' %}
+          <form method="post" action="{{ url_for('official_complaint_submit', scan_id=scan.id) }}" class="inline">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <input type="hidden" name="reference" value="{{ d.reference }}">
+            <button class="linkish" type="submit" style="color:var(--muted)">mark submitted</button>
+          </form>
+          {% endif %}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    </div>
+  {% endif %}
+  {% if scan.verdict.startswith('NON_COMPLIANT') %}
+    <p>
+      <a class="btn warn" href="{{ url_for('official_complaint', scan_id=scan.id) }}">
+        Prepare the official complaint &rarr;</a>
+      <a class="btn alt sm" href="{{ url_for('scan_result', scan_id=scan.id, consumer=1, lang=lang) }}">Consumer view ({{ 'English' if lang=='en' else languages[lang] }})</a>
+    </p>
+  {% else %}
+    <p class="help">A complaint is prepared only when the pack has substantive
+      findings (major or minor). The consumer view remains available for
+      explaining rights to a shopper.</p>
+  {% endif %}
+  {% else %}
+    <p class="help">Read-only access: this account can review every scan,
+      finding and generated memo, but complaints are prepared by field roles.</p>
+  {% endif %}
+  {% endif %}
+</div>
+
+<div>
+  <div class="card evidence">
+    <h3>Photographic evidence</h3>
+    <img src="{{ url_for('static', filename='uploads/' ~ (scan.overlay_file or scan.image_file)) }}" alt="Annotated label">
+    <p class="legend">
+      <span class="swatch" style="background:#5aaa5a"></span>read and passed
+      &nbsp;<span class="swatch" style="background:#dc2828"></span>failed a check
+      &nbsp;<span class="swatch" style="background:#ff8c00"></span>barcode used as the ruler
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Calibration</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><td>Barcode</td><td class="mono">{{ scan.barcode or 'not decoded' }}</td></tr>
+      <tr><td>GS1 prefix issued to</td><td>{{ scan.barcode_country or '—' }}</td></tr>
+      <tr><td>Scale</td><td class="mono">{% if scan.px_per_mm %}{{ '%.2f'|format(scan.px_per_mm) }} px/mm{% else %}—{% endif %}</td></tr>
+      <tr><td>Method</td><td>{{ scan.calibration_mode }}</td></tr>
+      <tr><td>Frames</td><td>{{ scan.frame_count }}</td></tr>
+    </table>
+    </div>
+    {% if ctx.origin_note %}<p class="help">{{ ctx.origin_note }}</p>{% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Capture quality gate</h3>
+    <div class="barrow">
+      <span>Overall capture score</span>
+      <span class="bar"><i style="width:{{ (gate.score*100)|round }}%"></i></span>
+      <span class="mono">{{ '%.2f'|format(gate.score) }}</span>
+    </div>
+    <div class="table-scroll">
+    <table>
+      <tr><td>Mean OCR confidence</td><td class="mono">{{ gate.signals.ocr_confidence }}%</td></tr>
+      <tr><td>Lines detected</td><td class="mono">{{ gate.signals.lines_detected }}</td></tr>
+      <tr><td>Sharpness</td><td class="mono">{{ gate.signals.sharpness }}</td></tr>
+      <tr><td>Glare lost</td><td class="mono">{{ gate.signals.glare_pct }}%</td></tr>
+    </table>
+    </div>
+    {% if gate.retake_recommended %}
+      <div class="alert alert-warning" style="margin:12px 0 0">
+        <b>Retake recommended.</b> {{ gate.reasons|join('; ') }}.
+        The verdict above is provisional.
+      </div>
+    {% else %}
+      <p class="help">Capture passed the reliability threshold, so the verdict is
+        being reported rather than deferred.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h3>Pack context</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><td>Net quantity read</td><td class="mono">{{ ctx.net_quantity_g_ml or '—' }} g/ml</td></tr>
+      <tr><td>MRP read</td><td class="mono">{{ ctx.mrp_value or '—' }}</td></tr>
+      <tr><td>Manufacture</td><td class="mono">{{ ctx.mfg_month_year or '—' }}</td></tr>
+      <tr><td>Imported pack</td><td>{{ 'yes' if ctx.is_imported else 'no' }}</td></tr>
+      <tr><td>Sync state</td><td>{{ scan.sync_state }}</td></tr>
+    </table>
+    </div>
+  </div>
+
+  <a class="btn" style="width:100%;text-align:center" href="{{ url_for('scan_report', scan_id=scan.id) }}">Download inspection report (PDF)</a>
+  {% if user.role != 'auditor' %}
+  <a class="btn alt" style="width:100%;text-align:center;margin-top:8px" href="{{ url_for('scan_new') }}">Scan another pack</a>
+  {% endif %}
+</div>
+</div>
+{% endblock %}

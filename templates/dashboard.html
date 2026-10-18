@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Dashboard &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Compliance dashboard</h1>
+<p class="lede">Aggregate view for the officer in charge. Device figures come from
+this handset's local database; central figures are what has actually reached the
+departmental server.</p>
+
+<div class="grid g4">
+  <div class="stat"><div class="n">{{ total }}</div><div class="l">Scans on device</div></div>
+  <div class="stat good"><div class="n">{{ verdicts.get('COMPLIANT',0) }}</div><div class="l">Compliant</div></div>
+  <div class="stat bad"><div class="n">{{ verdicts.get('NON_COMPLIANT',0) + verdicts.get('NON_COMPLIANT_MINOR',0) }}</div><div class="l">With findings</div></div>
+  <div class="stat warn"><div class="n">{{ queue.scans }}</div><div class="l">Awaiting upload</div></div>
+</div>
+
+<div class="split" style="margin-top:20px">
+<div>
+  <h2>Most frequently contravened provisions</h2>
+  {% if by_rule %}
+    {% for r in by_rule %}
+    <div class="barrow">
+      <span class="mono">{{ r.citation }}</span>
+      <span class="bar"><i style="width:{{ (r.c / max_rule * 100)|round }}%"></i></span>
+      <span class="mono">{{ r.c }}</span>
+    </div>
+    {% endfor %}
+    <p class="help">This is the number that tells an enforcement wing where to
+      concentrate: repeated failures against one provision point at a systemic
+      packaging practice rather than at one careless trader.</p>
+  {% else %}
+    <p class="help">No findings recorded yet. Run a scan to populate this.</p>
+  {% endif %}
+
+  <h2>Compliance by product category</h2>
+  {% if by_category %}
+  <div class="table-scroll">
+  <table>
+    <tr><th>Category</th><th>Scanned</th><th>Compliant</th><th>Rate</th></tr>
+    {% for c in by_category %}
+    <tr><td>{{ c.category }}</td><td class="mono">{{ c.total }}</td>
+      <td class="mono">{{ c.ok }}</td>
+      <td class="mono">{{ ((c.ok or 0) / c.total * 100)|round(0)|int }}%</td></tr>
+    {% endfor %}
+  </table>
+  </div>
+  {% else %}<p class="help">Nothing to show yet.</p>{% endif %}
+
+  <h2>Recent scans</h2>
+  <div class="table-scroll">
+  <table>
+    <tr><th>Scan</th><th>Product</th><th>Verdict</th><th>Findings</th><th>Sync</th></tr>
+    {% for s in scans %}
+    <tr>
+      <td class="mono"><a href="{{ url_for('scan_result', scan_id=s.id) }}">{{ s.uid }}</a></td>
+      <td>{{ s.product_name }}</td>
+      <td><span class="verdict v-{{ s.verdict }}">{{ s.verdict.replace('_',' ') }}</span></td>
+      <td class="mono">{{ s.major_count }}M / {{ s.minor_count }}m</td>
+      <td>{{ s.sync_state }}</td>
+    </tr>
+    {% else %}
+    <tr><td colspan="5">No scans yet. <a href="{{ url_for('scan_new') }}">Run one</a>.</td></tr>
+    {% endfor %}
+  </table>
+  </div>
+</div>
+
+<div>
+  <div class="card">
+    <h3>Central server</h3>
+    <div class="table-scroll">
+    <table>
+      <tr><td>Scans received</td><td class="mono">{{ central.total }}</td></tr>
+      <tr><td>Complaints received</td><td class="mono">{{ central.complaints }}</td></tr>
+      <tr><td>Reporting devices</td><td class="mono">{{ central.devices|length }}</td></tr>
+    </table>
+    </div>
+    <a class="btn alt sm" style="margin-top:10px" href="{{ url_for('sync_view') }}">Open sync console</a>
+  </div>
+
+  <div class="card">
+    <h3>Daily throughput</h3>
+    {% for d in by_day %}
+    <div class="barrow">
+      <span class="mono">{{ d.d }}</span>
+      <span class="bar"><i style="width:{{ ((d.ok or 0) / d.total * 100)|round }}%;background:var(--green)"></i></span>
+      <span class="mono">{{ d.total }}</span>
+    </div>
+    {% else %}<p class="help">No activity recorded yet.</p>{% endfor %}
+    <p class="help">Green portion of each bar is the compliant share of that day's scans.</p>
+  </div>
+
+  <div class="card">
+    <h3>Sync activity</h3>
+    <div class="table-scroll">
+    <table>
+      {% for l in sync_log %}
+      <tr><td class="mono" style="white-space:nowrap">{{ l.at[11:16] }}</td>
+          <td>{{ l.detail or l.event }}</td></tr>
+      {% else %}<tr><td class="help">Nothing logged yet.</td></tr>{% endfor %}
+    </table>
+    </div>
+  </div>
+</div>
+</div>
+{% endblock %}

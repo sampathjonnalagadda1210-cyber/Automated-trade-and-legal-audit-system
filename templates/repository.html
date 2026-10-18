@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}Repository &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Scan repository</h1>
+<p class="lede">Every scan ever taken on this device, searchable by product,
+manufacturer, barcode or premises. This is the evidence trail an enforcement
+action is built on.</p>
+
+<form class="card" method="get">
+  <div class="grid g3">
+    <div><label for="q">Search</label>
+      <input id="q" name="q" type="text" value="{{ search }}"
+             placeholder="Product, manufacturer, barcode or premises"></div>
+    <div><label for="v">Verdict</label>
+      <select id="v" name="verdict">
+        <option value="">Any</option>
+        {% for opt in ['COMPLIANT','NON_COMPLIANT','NON_COMPLIANT_MINOR','INCONCLUSIVE'] %}
+        <option value="{{ opt }}" {{ 'selected' if verdict==opt }}>{{ opt.replace('_',' ') }}</option>
+        {% endfor %}
+      </select></div>
+    <div><label>&nbsp;</label><button class="btn" style="width:100%">Search</button></div>
+  </div>
+</form>
+
+<p class="help" style="margin-bottom:10px">{{ total }} scan(s) on this device
+  &middot; page {{ page }} of {{ pages }}</p>
+
+<div class="table-scroll"><table>
+  <tr><th>Scan</th><th>When</th><th>Product</th><th>Manufacturer</th><th>Barcode</th>
+      <th>Verdict</th><th>Findings</th><th>Sync</th><th></th></tr>
+  {% for s in scans %}
+  <tr class="{{ 'flag' if s.verdict in ('NON_COMPLIANT','NON_COMPLIANT_MINOR') }}">
+    <td class="mono">{{ s.uid }}</td>
+    <td class="mono">{{ s.created_at[:16].replace('T',' ') }}</td>
+    <td>{{ s.product_name }}</td>
+    <td>{{ s.manufacturer or '—' }}</td>
+    <td class="mono">{{ s.barcode or '—' }}</td>
+    <td><span class="verdict v-{{ s.verdict }}">{{ s.verdict.replace('_',' ') }}</span></td>
+    <td class="mono">{{ s.major_count }}M / {{ s.minor_count }}m</td>
+    <td>{{ s.sync_state }}</td>
+    <td><a class="btn alt sm" href="{{ url_for('scan_result', scan_id=s.id) }}">Open</a></td>
+  </tr>
+  {% else %}
+  <tr><td colspan="9">Nothing matched. <a href="{{ url_for('scan_new') }}">Run a scan</a>.</td></tr>
+  {% endfor %}
+</table></div>
+
+<div class="pager">
+  {% if page > 1 %}
+  <a class="btn alt sm" href="{{ url_for('repository', q=search, verdict=verdict, page=page-1) }}">&larr; Newer</a>
+  {% endif %}
+  <span class="help">Showing {{ scans|length }} of {{ total }}</span>
+  {% if page < pages %}
+  <a class="btn alt sm" href="{{ url_for('repository', q=search, verdict=verdict, page=page+1) }}">Older &rarr;</a>
+  {% endif %}
+  <span style="flex:1"></span>
+  <a class="btn alt sm" href="{{ url_for('repository_export', q=search, verdict=verdict) }}">Export as CSV &darr;</a>
+</div>
+{% endblock %}

@@ -1,0 +1,124 @@
+{
+  "_note": "Cached listing snapshots. In deployment a scheduled backend job refreshes these from marketplace product pages; the checker only ever reads the cache, so the device never needs to reach a marketplace itself. Platform names are generic stand-ins - the point is the check, not naming a particular seller.",
+  "refresh_interval_hours": 6,
+  "listings": [
+    {
+      "id": "LST-1001",
+      "platform": "MarketOne",
+      "title": "Surya Foods Roasted Chana Dal 1 kg Pouch",
+      "url": "https://example-marketplace.in/p/LST-1001",
+      "seller": "Surya Retail LLP",
+      "snapshot_date": "2026-09-14",
+      "page_text": [
+        "Net Quantity: 1 kg",
+        "MRP: Rs. 185.00 (inclusive of all taxes)",
+        "Manufactured by: Surya Foods Pvt. Ltd., Plot 14, MIDC Industrial Area, Pune 411019",
+        "Country of Origin: India",
+        "Consumer Care: care@suryafoods.co.in, Toll Free 1800 200 1199",
+        "Month and Year of Manufacture: 03/2026"
+      ],
+      "declaration_images": []
+    },
+    {
+      "id": "LST-1002",
+      "platform": "MarketOne",
+      "title": "Glowpack Masala Potato Wafers Family Pack",
+      "url": "https://example-marketplace.in/p/LST-1002",
+      "seller": "SnackHub Traders",
+      "snapshot_date": "2026-09-14",
+      "page_text": [
+        "Weight: 750 g",
+        "Price: Rs. 99",
+        "Crispy masala wafers, fried in sunflower oil.",
+        "Sold by SnackHub Traders"
+      ],
+      "declaration_images": []
+    },
+    {
+      "id": "LST-1003",
+      "platform": "ShopBazaar",
+      "title": "Alpine Brew Instant Coffee Granules 200 g Jar",
+      "url": "https://example-bazaar.in/item/LST-1003",
+      "seller": "Alpine Trading Co.",
+      "snapshot_date": "2026-09-15",
+      "page_text": [
+        "Premium freeze-dried instant coffee.",
+        "Imported and marketed by Alpine Trading Co., 22 Harbour Road, Mumbai 400001"
+      ],
+      "declaration_images": ["listing_alpine_declarations.png"]
+    },
+    {
+      "id": "LST-1004",
+      "platform": "ShopBazaar",
+      "title": "Nilgiri Tea Co. Estate Black Tea 250 g",
+      "url": "https://example-bazaar.in/item/LST-1004",
+      "seller": "Nilgiri Tea Co.",
+      "snapshot_date": "2026-09-15",
+      "page_text": [
+        "Net Quantity: 250 g",
+        "MRP Rs. 240.00 inclusive of all taxes",
+        "Packed by: Nilgiri Tea Co., Coonoor 643101",
+        "Country of Origin: India",
+        "Consumer Care: care@nilgiritea.in, 1800 123 7788"
+      ],
+      "declaration_images": []
+    },
+    {
+      "id": "LST-1005",
+      "platform": "QuickCart",
+      "title": "Vedic Herbals Triphala Churna 100 g",
+      "url": "https://example-quickcart.in/sku/LST-1005",
+      "seller": "Wellness Depot",
+      "snapshot_date": "2026-09-16",
+      "page_text": [
+        "Traditional ayurvedic formulation.",
+        "Net Quantity 100 g",
+        "Manufactured by Vedic Herbals, Haridwar 249401",
+        "Country of Origin: India"
+      ],
+      "declaration_images": []
+    },
+    {
+      "id": "LST-1006",
+      "platform": "QuickCart",
+      "title": "Imported Olive Oil Extra Virgin 500 ml Tin",
+      "url": "https://example-quickcart.in/sku/LST-1006",
+      "seller": "Gourmet Imports India",
+      "snapshot_date": "2026-09-16",
+      "page_text": [
+        "Cold pressed extra virgin olive oil, 500 ml.",
+        "MRP Rs. 899",
+        "Imported by Gourmet Imports India, Gurugram 122001"
+      ],
+      "declaration_images": []
+    },
+    {
+      "id": "LST-1007",
+      "platform": "MarketOne",
+      "title": "Household Detergent Powder 2 kg Refill",
+      "url": "https://example-marketplace.in/p/LST-1007",
+      "seller": "CleanCo Distributors",
+      "snapshot_date": "2026-09-17",
+      "page_text": [
+        "Tough on stains, gentle on fabric. 2 kg refill pack."
+      ],
+      "declaration_images": ["listing_detergent_declarations.png"]
+    },
+    {
+      "id": "LST-1008",
+      "platform": "ShopBazaar",
+      "title": "Stainless Steel Water Bottle 1 Litre",
+      "url": "https://example-bazaar.in/item/LST-1008",
+      "seller": "HomeEssentials",
+      "snapshot_date": "2026-09-17",
+      "page_text": [
+        "Double walled vacuum insulated bottle, 1 litre capacity.",
+        "MRP Rs. 749 (inclusive of all taxes)",
+        "Marketed by HomeEssentials Retail, Bengaluru 560037",
+        "Country of Origin: China",
+        "Customer care: support@homeessentials.in"
+      ],
+      "declaration_images": []
+    }
+  ]
+}

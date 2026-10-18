@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Rule book &middot; A.T.L.A.S.{% endblock %}
+{% block content %}
+<h1>Encoded rule set</h1>
+<p class="lede">Nothing about the law is hardcoded in the engine. Keywords,
+citations, severities, the Rule 7(3) height table and the exemptions all live in
+one editable file. When the Rules are amended &mdash; as they were in 2017 and
+again in 2022 &mdash; the data changes and the code does not. That is also why
+every finding can cite a provision: the citation travels with the rule.</p>
+<p class="help" style="margin-bottom:18px">Version <b>{{ rules.rule_set_version }}</b>,
+  effective {{ rules.effective_from }} &middot; source: {{ rules.source }}</p>
+
+<h2>Mandatory declarations</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Declaration</th><th>Rule</th><th>Severity</th><th>In plain words</th></tr>
+  {% for f in rules.mandatory_fields %}
+  <tr><td>{{ f.label }}</td><td class="mono">{{ f.citation }}</td>
+      <td><span class="pill {{ 'no' if f.severity=='major' }}">{{ f.severity }}</span></td>
+      <td>{{ f.plain }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+
+<h2>Rule 7(3) minimum height table</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Net quantity band</th><th>Normal print</th><th>Blown / embossed</th></tr>
+  {% for r in rules.font_height_table_mm.by_net_quantity %}
+  <tr><td>{{ r.band }}</td><td class="mono">{{ r.normal_mm }} mm</td>
+      <td class="mono">{{ r.embossed_mm }} mm</td></tr>
+  {% endfor %}
+</table>
+</div>
+<p class="help">A measurement tolerance of
+  {{ rules.font_height_table_mm.measurement_tolerance_mm }} mm is applied.
+  {{ rules.font_height_table_mm.note }}</p>
+
+<h2>Exemptions recognised</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Rule</th><th>Citation</th><th>Effect</th></tr>
+  {% for e in rules.exemptions %}
+  <tr><td class="mono">{{ e.rule_id }}</td><td class="mono">{{ e.citation }}</td>
+      <td>{{ e.description }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+
+<h2>Cross-field and derived checks</h2>
+<div class="table-scroll">
+<table>
+  <tr><th>Check</th><th>Citation</th><th>Severity</th><th>What it catches</th></tr>
+  {% for c in rules.cross_field_rules %}
+  <tr><td class="mono">{{ c.rule_id }}</td><td class="mono">{{ c.citation }}</td>
+      <td>{{ c.severity }}</td><td>{{ c.description }}</td></tr>
+  {% endfor %}
+</table>
+</div>
+{% endblock %}
